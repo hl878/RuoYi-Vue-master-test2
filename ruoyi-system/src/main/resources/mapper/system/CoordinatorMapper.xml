@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.CoordinatorMapper">
+    
+    <resultMap type="Coordinator" id="CoordinatorResult">
+        <result property="coordinatorType"    column="coordinator_type"    />
+        <result property="coordinatorName"    column="coordinator_name"    />
+        <result property="coordinatorEmail"    column="coordinator_email"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectCoordinatorVo">
+        select coordinator_type, coordinator_name, coordinator_email, create_by, create_time, update_by, update_time, remark from coordinator
+    </sql>
+
+    <select id="selectCoordinatorList" parameterType="Coordinator" resultMap="CoordinatorResult">
+        <include refid="selectCoordinatorVo"/>
+        <where>  
+            <if test="coordinatorType != null  and coordinatorType != ''"> and coordinator_type = #{coordinatorType}</if>
+            <if test="coordinatorName != null  and coordinatorName != ''"> and coordinator_name like concat('%', #{coordinatorName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectCoordinatorByCoordinatorEmail" parameterType="String" resultMap="CoordinatorResult">
+        <include refid="selectCoordinatorVo"/>
+        where coordinator_email = #{coordinatorEmail}
+    </select>
+        
+    <insert id="insertCoordinator" parameterType="Coordinator">
+        insert into coordinator
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="coordinatorType != null and coordinatorType != ''">coordinator_type,</if>
+            <if test="coordinatorName != null and coordinatorName != ''">coordinator_name,</if>
+            <if test="coordinatorEmail != null">coordinator_email,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="coordinatorType != null and coordinatorType != ''">#{coordinatorType},</if>
+            <if test="coordinatorName != null and coordinatorName != ''">#{coordinatorName},</if>
+            <if test="coordinatorEmail != null">#{coordinatorEmail},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCoordinator" parameterType="Coordinator">
+        update coordinator
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="coordinatorType != null and coordinatorType != ''">coordinator_type = #{coordinatorType},</if>
+            <if test="coordinatorName != null and coordinatorName != ''">coordinator_name = #{coordinatorName},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where coordinator_email = #{coordinatorEmail}
+    </update>
+
+    <delete id="deleteCoordinatorByCoordinatorEmail" parameterType="String">
+        delete from coordinator where coordinator_email = #{coordinatorEmail}
+    </delete>
+
+    <delete id="deleteCoordinatorByCoordinatorEmails" parameterType="String">
+        delete from coordinator where coordinator_email in 
+        <foreach item="coordinatorEmail" collection="array" open="(" separator="," close=")">
+            #{coordinatorEmail}
+        </foreach>
+    </delete>
+</mapper>
